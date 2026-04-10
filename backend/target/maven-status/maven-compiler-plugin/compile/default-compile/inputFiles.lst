@@ -1,0 +1,16 @@
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/SmartCacheApplication.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/ai/GeminiClient.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/analytics/AnalyticsTracker.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/cache/RedisClient.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/config/AppConfig.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/config/CorsConfig.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/controller/AnalyticsController.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/controller/HealthController.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/controller/StatusController.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/controller/SubmitController.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/model/Job.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/model/Metrics.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/model/SubmitRequest.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/model/SummarizeResult.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/service/ProcessorService.java
+/home/manish/Desktop/New Folder/ai-summerizer/backend/src/main/java/com/smartcache/worker/WorkerPool.java
