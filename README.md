@@ -74,9 +74,9 @@ SmartCache AI separates the fast API from slow AI processing using an asynchrono
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Go 1.21+ · Gin |
-| Cache + Queue | Valkey 8 (Redis-compatible) |
-| AI | Google Gemini 1.5 Flash |
+| Backend | Java 17 · Spring Boot 3.4 |
+| Cache + Queue | Valkey 8 (Redis-compatible) · Spring Data Redis |
+| AI | Google Gemini 1.5 Flash · OkHttp |
 | Frontend | React 18 · TypeScript · Vite 5 |
 
 ---
@@ -100,7 +100,7 @@ cp backend/.env.example backend/.env
 
 ```bash
 cd backend
-go run cmd/server/main.go
+mvn spring-boot:run
 ```
 
 Backend runs at `http://localhost:8080`
@@ -113,7 +113,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`
+Frontend runs at `http://localhost:5173/` (or `5174/`)
 
 ---
 
@@ -157,23 +157,26 @@ Health check.
 ```
 smartcache-ai/
 ├── backend/
-│   ├── cmd/server/main.go          # Entry point
-│   ├── config/config.go            # Env config
-│   ├── internal/
-│   │   ├── ai/                     # Gemini client + prompts
-│   │   ├── analytics/              # Metrics tracking
-│   │   ├── api/handlers/           # HTTP handlers
-│   │   ├── cache/                  # Valkey client
-│   │   ├── services/               # Processor (URL fetch + AI)
-│   │   └── worker/                 # Job struct + goroutine pool
-│   ├── .env                        # ← Add your GEMINI_API_KEY here
-│   └── go.mod
+│   ├── src/main/java/com/smartcache/
+│   │   ├── SmartCacheApplication.java  # Entry point
+│   │   ├── config/                     # Spring & CORS config
+│   │   ├── model/                      # DTOs & Entities
+│   │   ├── cache/                      # Valkey/Redis client
+│   │   ├── ai/                         # Gemini integration
+│   │   ├── service/                    # Processing logic
+│   │   ├── worker/                     # ExecutorService thread pool
+│   │   └── controller/                 # REST endoints (Submit, Status, etc)
+│   ├── src/main/resources/
+│   │   └── application.properties      # Spring properties
+│   ├── .env                            # ← Add your GEMINI_API_KEY here
+│   ├── .env.example
+│   └── pom.xml                         # Maven dependencies
 ├── frontend/
 │   └── src/
-│       ├── components/             # SubmitForm, JobStatus, ResultCard
-│       ├── pages/                  # Home, Analytics
-│       └── services/api.ts         # Typed API client
-└── docker-compose.yml              # Valkey service
+│       ├── components/                 # SubmitForm, JobStatus, ResultCard
+│       ├── pages/                      # Home, Analytics
+│       └── services/api.ts             # Typed API client
+└── docker-compose.yml                  # Valkey service
 ```
 
 ---
