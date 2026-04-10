@@ -1,6 +1,5 @@
 package com.smartcache.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartcache.ai.GeminiClient;
 import com.smartcache.analytics.AnalyticsTracker;
 import com.smartcache.cache.RedisClient;
@@ -30,7 +29,6 @@ public class ProcessorService {
     private final GeminiClient aiClient;
     private final AnalyticsTracker analytics;
     private final Duration cacheTtl;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ProcessorService(RedisClient cache, GeminiClient aiClient,
                             AnalyticsTracker analytics,

@@ -10,51 +10,46 @@ A scalable backend system that accepts text/URL inputs, processes them asynchron
 
 ```mermaid
 sequenceDiagram
-    participant Client as 🖥️ Client UI
-    participant API as ⚙️ Go API (Gin)
-    participant Redis as 🗄️ Valkey (Cache/Queue)
-    participant Worker as 👷 Worker Pool
-    participant Web as 🌐 Web/URL
+    autonumber
+    participant C as 🖥️ Client UI
+    participant A as ⚙️ Spring Boot API
+    participant R as 🗄️ Valkey
+    participant W as 👷 Worker
+    participant Web as 🌐 Web
     participant AI as 🧠 Gemini AI
 
-    %% Request Flow (Cache Hit vs Miss)
-    Client->>API: POST /api/submit (Text/URL)
-    API->>API: Hash Input (SHA-256)
-    API->>Redis: Check Cache (summary:{hash})
+    Note over C,AI: --- PHASE 1: Job Submission & Caching ---
+    C->>A: POST /api/submit (Text/URL)
+    A->>A: Hash Input (SHA-256)
+    A->>R: Check Cache (summary:{hash})
     
-    alt ✅ Cache HIT
-        Redis-->>API: Cached Summary & Tags
-        API-->>Client: 200 OK (Instant Response)
-    else ❌ Cache MISS
-        API->>Redis: Create job:{id} -> 'pending'
-        API->>Redis: RPUSH to job_queue
-        API-->>Client: 202 Accepted (Returns job_id)
-        
-        %% Worker Async Flow
-        Note over Worker,AI: Asynchronous Background Processing
-        Worker->>Redis: BLPOP job_queue (Blocking Pop)
-        Redis-->>Worker: job_id
-        Worker->>Redis: Update job:{id} -> 'processing'
-        
-        opt Input is URL
-            Worker->>Web: Fetch HTML Content
-            Web-->>Worker: Raw Text
-        end
-        
-        Worker->>AI: Generate Summary + Tags
-        AI-->>Worker: JSON Result
-        
-        Worker->>Redis: SET summary:{hash} (with TTL)
-        Worker->>Redis: Update job:{id} -> 'completed'
-    end
+    R-->>A: [Cache HIT] Returning Cached Data
+    A-->>C: 200 OK (Instant Response)
     
-    %% Polling Flow
-    loop Every 1.5s
-        Client->>API: GET /api/status/:job_id
-        API->>Redis: GET job:{id}
-        Redis-->>API: Job Status
-        API-->>Client: Status (pending/processing/completed)
-    end
+    R-->>A: [Cache MISS] Not Found
+    A->>R: SET job:{id} = 'pending'
+    A->>R: RPUSH job_id to 'job_queue'
+    A-->>C: 202 Accepted (Returns upcoming job_id)
+        
+    Note over C,AI: --- PHASE 2: Background Asynchronous Processing ---
+    W->>R: BLPOP 'job_queue' (blocking pop)
+    R-->>W: Receives job_id
+    W->>R: Update job:{id} = 'processing'
+        
+    W->>Web: Fetch HTML Content (if URL provided)
+    Web-->>W: Raw Text Data
+        
+    W->>AI: Generate Summary + Tags
+    AI-->>W: JSON Result
+        
+    W->>R: SET summary:{hash} (with TTL)
+    W->>R: Update job:{id} = 'completed'
+    
+    Note over C,AI: --- PHASE 3: Client Polling ---
+    C->>A: GET /api/status/:job_id (Polled every 1.5s)
+    A->>R: GET job:{id}
+    R-->>A: Returns Job Status
+    A-->>C: Status (pending/processing/completed)
 ```
 
 ### ⚙️ Core Working Explained
